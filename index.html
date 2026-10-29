@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Training Feedback Analysis Report Generator</title>
+<link rel="icon" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20128%20128%22%20role%3D%22img%22%20aria-labelledby%3D%22title%20desc%22%3E%20%20%3Ctitle%20id%3D%22title%22%3EFeedback%20Analysis%20Report%3C/title%3E%20%20%3Cdesc%20id%3D%22desc%22%3EA%20saffron%20feedback%20bubble%20containing%20an%20analytical%20bar%20chart%2C%20with%20a%20spring-green%20insight%20marker.%3C/desc%3E%20%20%3C%21--%20Jindal-inspired%20UI%20mark%3A%20saffron%20%23F47920%2C%20spring%20green%20%234DBB45%2C%20charcoal%20%23666668.%20--%3E%20%20%3Cpath%20fill%3D%22%23F47920%22%20d%3D%22M20%2018h88c8.8%200%2016%207.2%2016%2016v48c0%208.8-7.2%2016-16%2016H67.8L47.2%20113.4c-5.1%203.8-12.4.2-12.4-6.2V98H20c-8.8%200-16-7.2-16-16V34c0-8.8%207.2-16%2016-16Z%22/%3E%20%20%3Cpath%20fill%3D%22%23FFF%22%20d%3D%22M33%2072h12V53H33v19Zm25%200h12V39H58v33Zm25%200h12V27H83v45Z%22/%3E%20%20%3Cpath%20fill%3D%22%23FFF%22%20d%3D%22M30%2079h68v6H30z%22/%3E%20%20%3Ccircle%20cx%3D%2289%22%20cy%3D%2226%22%20r%3D%2214%22%20fill%3D%22%234DBB45%22/%3E%20%20%3Cpath%20fill%3D%22%23FFF%22%20d%3D%22m83.8%2026.5%203.6%203.6%207.8-8.1%203.1%203-10.9%2011.2-6.7-6.6%203.1-3.1Z%22/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--or:#F47920;--bu:#7C4548;--gr:#636466;--bl:#496689;--nv:#1F3864;--rw:#F8F1F1;--ln:#cfc3c3;--ok:#4DBB45}
+*{box-sizing:border-box}body{margin:0;background:#e9e4e4;font-family:Poppins,"Segoe UI",Arial,sans-serif;color:#000}
+.bar{position:sticky;top:0;z-index:9;background:var(--bu);color:#fff;display:flex;align-items:center;gap:12px;padding:8px 18px;flex-wrap:wrap}
+.bar svg{width:34px;height:34px}.bar b{font-size:15px;flex:1}.btn{background:var(--or);color:#fff;border:0;border-radius:6px;padding:8px 14px;font:600 13px Poppins,Arial;cursor:pointer}.btn.g{background:#fff;color:var(--bu)}
+.drop{max-width:640px;margin:60px auto;background:#fff;border:2px dashed var(--bu);border-radius:12px;padding:36px;text-align:center}.drop h2{color:var(--bu);margin:10px 0}.drop p{color:var(--gr);font-size:14px}.drop svg{width:70px}
+.drop.on{background:var(--rw)}
+.page{--s:11px;width:210mm;height:297mm;margin:14px auto;background:#fff;padding:12mm 14mm 14mm;position:relative;overflow:hidden;font-size:var(--s);line-height:1.42;box-shadow:0 2px 10px #0003}
+.page h1{margin:0;text-align:center;color:var(--or);font-size:2.3em;font-weight:700;line-height:1.2}
+.sub{text-align:center;color:var(--gr);font-size:1.45em;margin:.3em 0 .1em}.meta{text-align:center;color:var(--bu);font-weight:700;font-size:.95em}
+.logo{position:absolute;left:14mm;top:11mm;width:15mm}
+p{margin:.5em 0;text-align:justify}
+table{width:100%;border-collapse:collapse;margin:.6em 0}td,th{border:1px solid var(--ln);padding:.38em .7em;font-size:1em}
+.k td:first-child{background:var(--bu);color:#fff;font-weight:700;width:36%}.k td:last-child{text-align:center}
+.q th{background:var(--bl);color:#fff;border:1px solid var(--nv);font-weight:700}.q td:last-child,.q th:last-child{text-align:center;width:30%}.q tr:nth-child(even) td{background:var(--rw)}
+h2{color:var(--bu);font-size:1.75em;margin:.9em 0 .2em;border-bottom:2px solid var(--bu);display:inline-block;padding-bottom:.05em}
+h3{color:var(--bu);font-size:1.25em;margin:.8em 0 .15em}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.two table{margin:.3em 0}.two th{background:var(--bu);color:#fff;text-align:left}.two td:last-child{text-align:center;width:22%;font-weight:700}
+ul,ol{margin:.3em 0;padding-left:1.4em}li{margin:.28em 0;text-align:justify}.qt li{font-style:italic;color:#222}.qt li::marker{color:var(--or)}
+.rec li b{color:var(--bu)}.rec i{color:var(--gr)}
+.foot{position:absolute;bottom:6mm;left:0;right:0;text-align:center;font-size:.8em;color:var(--gr)}
+.end{text-align:center;color:var(--bu);font-weight:700;margin-top:.8em}
+@media print{@page{size:A4;margin:0}body{background:#fff}.bar,.drop{display:none!important}.page{margin:0;box-shadow:none;page-break-after:always;break-after:page}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+<div class="bar"><svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">    <desc id="desc">A saffron feedback bubble containing an analytical bar chart, with a spring-green insight marker.</desc>  <!-- Jindal-inspired UI mark: saffron #F47920, spring green #4DBB45, charcoal #666668. -->  <path fill="#F47920" d="M20 18h88c8.8 0 16 7.2 16 16v48c0 8.8-7.2 16-16 16H67.8L47.2 113.4c-5.1 3.8-12.4.2-12.4-6.2V98H20c-8.8 0-16-7.2-16-16V34c0-8.8 7.2-16 16-16Z"/>  <path fill="#FFF" d="M33 72h12V53H33v19Zm25 0h12V39H58v33Zm25 0h12V27H83v45Z"/>  <path fill="#FFF" d="M30 79h68v6H30z"/>  <circle cx="89" cy="26" r="14" fill="#4DBB45"/>  <path fill="#FFF" d="m83.8 26.5 3.6 3.6 7.8-8.1 3.1 3-10.9 11.2-6.7-6.6 3.1-3.1Z"/></svg><b>Training Feedback Analysis Report Generator</b>
+<label class="btn g" id="add" title="Add more Excel files to the report">＋ Add File<input id="fi" type="file" accept=".xlsx,.xls" multiple hidden></label>
+<button class="btn g" id="clr" style="display:none;border:2px solid #fff;background:transparent;color:#fff" title="Remove all files and start fresh">✕ Clear File</button>
+<button class="btn" id="pr" style="display:none">Print / Save as PDF</button></div>
+<div id="m"><div class="drop" id="dz"><svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">    <desc id="desc">A saffron feedback bubble containing an analytical bar chart, with a spring-green insight marker.</desc>  <!-- Jindal-inspired UI mark: saffron #F47920, spring green #4DBB45, charcoal #666668. -->  <path fill="#F47920" d="M20 18h88c8.8 0 16 7.2 16 16v48c0 8.8-7.2 16-16 16H67.8L47.2 113.4c-5.1 3.8-12.4.2-12.4-6.2V98H20c-8.8 0-16-7.2-16-16V34c0-8.8 7.2-16 16-16Z"/>  <path fill="#FFF" d="M33 72h12V53H33v19Zm25 0h12V39H58v33Zm25 0h12V27H83v45Z"/>  <path fill="#FFF" d="M30 79h68v6H30z"/>  <circle cx="89" cy="26" r="14" fill="#4DBB45"/>  <path fill="#FFF" d="m83.8 26.5 3.6 3.6 7.8-8.1 3.1 3-10.9 11.2-6.7-6.6 3.1-3.1Z"/></svg><h2>Drop your Attendance &amp; Feedback Excel file(s) here</h2>
+<p>Each workbook needs an <b>Attendance</b> sheet (training details + attendance) and a <b>Feedback</b> sheet. The two-page report is built automatically from the data. Select several files to combine batches.</p>
+<label class="btn">Choose files<input id="fi2" type="file" accept=".xlsx,.xls" multiple hidden></label></div></div>
+<script>
+const L={"strongly agree":5,"agree":4,"neutral":3,"disagree":2,"strongly disagree":1};
+const CAT=["Understanding Learning Objectives","Relating Objectives with Learning Achieved","Immediate Applicability of Learning","Challenge Level of Course Content","Facilitator Knowledge Enhancement","Facilitator Experience Sharing","Ease of Course Materials","Course Material Supportiveness","Presentation Methodology","Pace & Duration","Communication Timeliness","Relevance to Role"];
+const NO=/^(na\b|n\/a|nil|none|no\b|nothing|nothin|all (ok|good)|ok\b|over ?all( good)?|it('?s| is)+ (a )?(over ?all )?good|already covered|not something|[-.\s]*$)/i;
+const TH=[["Interactive activities & role plays",/role.?play|activit|interact|game|exercise|challenge|ball|live|lively/i],["Frameworks & tools (BCG, SPIN, ZOPA…)",/spin|bcg|bsg|matrix|joh|zopa|architect|framework|grid|grow|model|technique|anchor|concept|tag ?line/i],["Structured negotiation process",/structur|steps|process|methodolog|strateg|frame|concession|consensus|approach/i],["People & customer insight",/customer|client|people|team|listen|perspective|trust|connect|self/i],["Facilitator & delivery",/present|facilitat|trainer|clarity|explain|speaker/i]];
+const SG=[["Materials & media (PPT, workbook, visuals)",/ppt|workbook|material|handout|visual|video|slide|organi[sz]ed/i],["Duration, frequency & timing",/\bdays?\b|duration|frequen|timing|rushed|flexible|longer/i],["More activities & practice",/activit|role.?play|exercise|practice|game/i],["Case studies & live examples",/case|example|real.?life|\blive\b|steel|industry|scenario/i],["On-site / plant exposure",/plant|visit|site|field/i],["Extra topics & concepts",/topic|concept|module|add\b|include|advanced|cover/i]];
+const $=s=>document.querySelector(s),sum=a=>a.reduce((x,y)=>x+y,0),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const MN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const dt=v=>{if(v==null||v==="")return null;let d=v instanceof Date?v:typeof v==="number"?new Date(Math.round((v-25569)*864e5)+(new Date().getTimezoneOffset()*0)):new Date(v);return isNaN(d)?null:d};
+const gd=(d,u)=>u?{d:d.getUTCDate(),m:d.getUTCMonth(),y:d.getUTCFullYear()}:{d:d.getDate(),m:d.getMonth(),y:d.getFullYear()};
+function fdr(s,e){if(!s)return"";e=e||s;const a=gd(s,s._u),b=gd(e,e._u);const f=x=>x.d+" "+MN[x.m]+" "+x.y;if(+s==+e)return f(b);if(a.m==b.m&&a.y==b.y)return a.d+"–"+f(b);return a.d+" "+MN[a.m]+(a.y!=b.y?" "+a.y:"")+" – "+f(b)}
+const sd=(v)=>{const d=dt(v);if(d)d._u=typeof v==="number";return d};
+function parse(buf,name){
+ const wb=XLSX.read(buf,{type:"array",cellDates:true});
+ const pick=k=>wb.Sheets[wb.SheetNames.find(n=>n.toLowerCase().includes(k))];
+ const rows=s=>s?XLSX.utils.sheet_to_json(s,{header:1,defval:null,raw:true}):[];
+ const F=rows(pick("feedback")),A=rows(pick("attend")),m=name.match(/batch[\s_\-]*(\d+)/i);
+ const b={label:m?"Batch "+m[1]:name.replace(/\.[^.]+$/,""),nom:0,att:0,rows:[],info:{}};
+ const di=A.findIndex(r=>r.some(c=>/training start date/i.test(String(c))));
+ if(di>=0){const h=A[di],r=A[di+1]||[],g=re=>r[h.findIndex(c=>re.test(String(c)))];
+  b.info={name:g(/training name/i),s:sd(g(/start date/i)),e:sd(g(/end date/i)),dur:g(/duration/i),type:g(/type of training/i),ie:g(/internal/i),fac:g(/faculty|vendor/i),mode:g(/mode/i),venue:g(/venue/i)}}
+ const hi=A.findIndex(r=>r.some(c=>/emp(loyee)?\.?\s*(id|code|no|name)/i.test(String(c)))&&r.filter(c=>c!=null).length>=3);
+ if(hi>=0){const body=A.slice(hi+1).filter(r=>(r[0]||r[1])&&r.some(c=>c!=null&&String(c).trim()!==""));
+  const PR=/^(present|attend|p$|yes|y$|✓|✔)/i,AB=/^(absent|not |a$|no$|n$|leave)/i,vv=(c,r)=>String(r[c]??"").trim();
+  const sc=c=>body.filter(r=>PR.test(vv(c,r))||AB.test(vv(c,r))).length;
+  let ac=A[hi].findIndex(c=>/attend|present|status/i.test(String(c)));
+  if(ac<0||sc(ac)==0){let best=0,w=Math.max(A[hi].length,...body.map(r=>r.length));for(let c=0;c<w;c++){const x=sc(c);if(x>best){best=x;ac=c}}if(!best)ac=-1}
+  b.nom=body.length;b.attKnown=ac>=0;b.att=ac<0?0:body.filter(r=>PR.test(vv(ac,r))).length}
+ const fh=F.findIndex(r=>r.some(c=>/timestamp/i.test(String(c))));if(fh<0)throw 0;
+ const H=F[fh].map(c=>String(c||"")),nc=H.findIndex(h=>/0-10|likely/i.test(h)),vc=H.findIndex(h=>/valuable/i.test(h)),ic=H.findIndex(h=>/improve|changes/i.test(h)),tn=H.findIndex(h=>/training name/i.test(h));
+ const qc=H.map((h,i)=>/^\s*\d+\)/.test(h)&&i!==nc?i:-1).filter(i=>i>=0);
+ for(const r of F.slice(fh+1)){const q=qc.map(i=>{const v=r[i];return typeof v==="number"?v:(L[String(v||"").trim().toLowerCase()]||0)});if(!q.some(x=>x))continue;const n=parseFloat(r[nc]);
+  b.rows.push({q,n:isNaN(n)?null:n,v:String(r[vc]||"").trim(),m:String(r[ic]||"").trim()});if(!b.info.name&&tn>=0)b.info.name=r[tn]}
+ return b}
+const VT2=[["Informative & useful content",/inform|useful|knowledge|learn|insight|aware|understand|educat|helpful|content/i],["Awareness of law, policy & rights",/posh|\blaw|\bact\b|legal|policy|right|harass|complain|committee|icc|redress|compliance|guideline|rules/i],["Clear & engaging delivery",/clear|explain|present|speaker|facilitat|trainer|engag|delivery|simple|interesting/i],["Practical examples & case studies",/example|case|scenario|real|story|situation|practical/i],["Interactive Q&A & discussion",/interact|question|q ?& ?a|discussion|quiz|video|role/i],["Workplace conduct & respect",/conduct|respect|behaviou?r|safe|dignity|gender|colleague|culture|environment|sensiti/i],["Overall appreciation",/good|great|excellent|nice|well|best|thank|wonderful|amazing|very/i]];
+const SG2=[["Reach & frequency (more employees, refreshers)",/all employee|everyone|\bevery|more people|refresher|regular|annual|repeat|workers|contract|mandatory|frequen/i],["Venue, audio & logistics",/audio|sound|\bmic|venue|seat|\bac\b|hall|auditorium|crowd|logistic|network|sitting|volume|projector|screen/i],["Language & accessibility",/hindi|language|regional|translat|local/i],["Scheduling & timing",/timing|schedule|slot|shift|early|late|lunch|break/i],["Content depth & quizzes",/depth|detail|advance|quiz|assessment|test|deeper|more content|section/i]];
+const STOP=new Set("the and for was were that this with from have has had are very not but all can will you your our they them their more some what when which would could should about into than then also been being its it's session training program programme sir madam good great nice well sessions".split(" "));
+function words(arr){const m={};arr.forEach(t=>{[...new Set(t.toLowerCase().match(/[a-z]{4,}/g)||[])].forEach(w=>{if(!STOP.has(w))m[w]=(m[w]||0)+1})});return Object.entries(m).filter(x=>x[1]>=2).sort((x,y)=>y[1]-x[1]).map(x=>["Frequently mentioned: “"+x[0]+"”",x[1]])}
+function mix(arr,T1,T2,qa,R,top){
+ let l=tally(arr,[...T1,...T2.filter(x=>!T1.some(y=>y[0]==x[0]))]).list.slice(0,5);
+ if(l.length<3)words(arr).filter(w=>!l.some(x=>x[0]==w[0])).slice(0,5-l.length).forEach(w=>l.push(w));
+ if(l.length<3){const o=qa.map((v,i)=>[v,i]).filter(x=>x[0]).sort((x,y)=>top?y[0]-x[0]:x[0]-y[0]);
+  for(const [v,i] of o){if(l.length>=3)break;l.push([CAT[i]+(top?" – top rated (":" – lowest rated (")+f2(v)+") †",R.filter(r=>top?r.q[i]>=4:r.q[i]&&r.q[i]<5).length])}}
+ return l}
+const nz=t=>t&&t.length>=3&&!NO.test(t.trim());
+const sub=(t,n)=>nz(t)&&t.replace(/[\s.]+$/,"").length>=n;
+const cap=t=>{t=t.trim().replace(/\s+/g," ").replace(/\s+,/g,",");t=t[0].toUpperCase()+t.slice(1);if(t.length>190)t=t.slice(0,187).replace(/\s\S*$/,"")+"…";return/[.!?…]$/.test(t)?t:t+"."};
+const tally=(arr,T,other)=>{const o=T.map(x=>[x[0],0]);let n=0;arr.forEach(t=>{let hit=0;T.forEach((x,i)=>{if(x[1].test(t)){o[i][1]++;hit=1}});if(!hit&&other){n++}});return{list:o.filter(x=>x[1]).sort((a,b)=>b[1]-a[1]),other:n}};
+const f2=x=>x.toFixed(2);
+function analyse(B){
+ const R=B.flatMap(b=>b.rows),qa=CAT.map((_,i)=>{const v=R.map(r=>r.q[i]).filter(Boolean);return v.length?sum(v)/v.length:0});
+ const all=R.flatMap(r=>r.q.filter(Boolean)),ns=R.map(r=>r.n).filter(x=>x!==null);
+ const hi=qa.indexOf(Math.max(...qa)),lo=qa.indexOf(Math.min(...qa));
+ const vals=R.map(r=>r.v).filter(t=>sub(t,2)),imps=R.map(r=>r.m).filter(t=>sub(t,4));
+ const ds=B.map(b=>b.info.s).filter(Boolean),de=B.map(b=>b.info.e||b.info.s).filter(Boolean);
+ const s=ds.length?new Date(Math.min(...ds)):null,e=de.length?new Date(Math.max(...de)):null;if(s)s._u=ds[0]._u;if(e)e._u=de[0]._u;
+ const I=B[0].info;
+ return{B,R,qa,hi,lo,avg:all.length?sum(all)/all.length:0,rec:ns.length?sum(ns)/ns.length:0,res:R.length,nom:sum(B.map(b=>b.nom)),att:sum(B.map(b=>b.att)),
+  det:ns.filter(x=>x<=6).length,pro:ns.filter(x=>x>=9).length,nn:ns.length,vals,imps,vt:tally(vals,TH,1),it:tally(imps,SG,1),vs:mix(vals,TH,VT2,qa,R,1),is:mix(imps,SG,SG2,qa,R,0),
+  names:[...new Set(B.map(b=>b.info.name).filter(Boolean))].join(" / ")||"Training Program",dates:fdr(s,e),I,min:Math.min(...qa.filter(x=>x))}}
+function quotes(a){
+ const seen=new Set(),pool=(arr,n)=>arr.filter(t=>sub(t,n)).sort((x,y)=>y.length-x.length).filter(t=>{const k=t.toLowerCase().replace(/\W/g,"");if(seen.has(k))return false;seen.add(k);return true});
+ const v=pool(a.R.map(r=>r.v),22),m=pool(a.R.map(r=>r.m),14);
+ const pick=[...v.slice(0,Math.min(v.length,10-Math.min(m.length,4))),...m.slice(0,4)];
+ const rest=[...v.slice(pick.filter(x=>v.includes(x)).length),...m.slice(4)];
+ while(pick.length<10&&rest.length)pick.push(rest.shift());
+ if(pick.length<10)a.R.map(r=>r.v).filter(t=>sub(t,5)&&!pick.includes(t)).forEach(t=>{if(pick.length<10)pick.push(t)});
+ return pick.slice(0,10).map(cap)}
+const jn=l=>l.length<2?l.join(""):l.slice(0,-1).join(", ")+" and "+l[l.length-1];
+function recs(a){
+ const g=n=>(a.it.list.find(x=>x[0].startsWith(n))||[0,0])[1],S=a.imps.length,nm=g("Materials"),nd=g("Duration"),na=g("More act"),nc=g("Case"),np=g("On-site"),nt=g("Extra");
+ const q=re=>a.imps.filter(t=>re.test(t)).map(t=>t.replace(/[\s.]+$/,"").trim()).slice(0,2);
+ const tv=a.vs.filter(x=>!/†/.test(x[0])).slice(0,2).map(x=>x[0].replace(/ \(.*\)/,"").toLowerCase()),qn=i=>CAT[i]+" ("+f2(a.qa[i])+")";
+ const mat=q(/ppt|workbook|material|visual|slide|organi/i),cs=q(/case|example|real|steel|scenario/i),dur=q(/day|frequen|rushed|timing/i);
+ const R=[];
+ const ord=a.qa.map((v,i)=>[v,i]).filter(x=>x[0]).sort((x,y)=>x[0]-y[0]),ACT=["Open each session with the learning objectives and close by revisiting them","Link every objective to a workplace example","Add a take-away action plan","Add scenario-based questions, quizzes or case discussions to raise the level of challenge","Brief the faculty on role-level examples for this audience","Encourage faculty to share more first-hand experiences and real situations","Simplify the deck and handouts, with fewer words per slide","Provide a reference guide or post-session handout","Use more varied media such as short videos, polls or exercises","Review session length and break timing against the volume of content","Send the invite and pre-read at least a week ahead","Tailor examples to each audience's role and level"];
+ if(nm+nc+nt==0)R.push([`Strengthen the lowest-rated areas: ${CAT[ord[0][1]]}`,`${qn(ord[0][1])} and ${qn(ord[1][1])} are the lowest of ${CAT.length} parameters${S?"":", and no written suggestions were received"}.`,`${ACT[ord[0][1]]}; ${ACT[ord[1][1]].charAt(0).toLowerCase()+ACT[ord[1][1]].slice(1)}.`]);else
+ R.push([`Upgrade materials, media and content depth`,`${nm+nc+nt} of ${S} improvement comments relate to materials, media, extra topics or examples, and the two material items are among the lowest rated (${qn(6)}; ${qn(7)}).`,
+  `Re-design the PPT and participant workbook with one consistent structure, a one-page job aid for each framework taught, and more visuals/video${mat.length?` (participants said: “${mat[0]}”)`:""}. Add 2–3 case studies or live examples from the participants' own business${cs.length?` (asked for: “${cs[0]}”)`:""}, and issue the workbook before the session.`]);
+ R.push([`Revisit duration, pacing and frequency`,nd?`${nd} participant(s) asked for more time or a different frequency; Pace & Duration scored ${f2(a.qa[9])}.`:`Pace & Duration scored ${f2(a.qa[9])}, so the current design works.`,
+  nd?`Either extend the programme (e.g. 3 days) or split it into two modules with a practice gap${dur.length?` (participants said: “${dur[0]}”)`:""}; offer flexible timing and repeat batches at a regular interval.`:`Keep the current duration and monitor pace in the next batch.`]);
+ R.push([`Build on what participants valued most`,`The most valued aspects were ${jn(tv)||"the interactive delivery"}, mentioned in ${a.vs.length&&!/†/.test(a.vs[0][0])?a.vs[0][1]+" of "+a.vals.length:"several"} written responses.`,
+  `Keep the activities and role plays${na?` and add more practice around each concept (${na} request${na>1?"s":""})`:""}; pair every tool with a hands-on exercise and give participants a toolkit card to take back to work.`]);
+ R.push([`Strengthen on-the-job application`,`${qn(2)} is ${a.qa[2]>=a.avg?"in line with":"below"} the overall average of ${f2(a.avg)}.`,
+  `End each session with a structured action plan, add a manager check-in at 30 days and a short refresher at 60–90 days${np?`; include a site/plant exercise as requested by ${np} participant${np>1?"s":""}`:""}.`]);
+ R.push([a.det?`Follow up with low scorers and keep the strengths`:`Retain the facilitator and replicate for future batches`,a.det?`${a.det} of ${a.nn} respondents gave a recommendation score of 6 or below, while the highest-rated area was ${qn(a.hi)}.`:`All ${a.nn} respondents scored the programme 7 or above; the highest-rated area was ${qn(a.hi)}.`,
+  a.det?`Hold a short conversation with these participants to confirm whether the score reflects content, logistics or an entry error, and carry the findings into the next batch.`:`Continue with the same faculty and extend the programme to other eligible groups as demand grows.`]);
+ return R}
+const tr=(k,v)=>`<tr><td>${k}</td><td>${v}</td></tr>`;
+function report(a){
+ const I=a.I,n=a.B.length,ak=a.att>0&&a.B.every(b=>b.attKnown),att=a.att,nom=a.nom,top=a.qa[a.hi],mn=Math.floor(a.min*10)/10;
+ const prog=[a.names,I.type].filter(Boolean).join(" – ")+(I.mode?" ("+I.mode+")":"");
+ const intro=`This report presents the analysis of participant feedback received for the ${esc(a.names)} training program${I.venue?" conducted at "+esc(I.venue):""}${n>1?" across "+n+" batches":""}${I.fac?", facilitated by "+esc(I.fac)+(I.ie?" ("+String(I.ie).toLowerCase()+" faculty)":""):""}. The analysis includes quantitative performance metrics, participant insights, and recommendations for future learning interventions.`;
+ const quant=`Participants rated the program positively across all key learning dimensions. All ${CAT.length} parameters scored above ${f2(mn)} out of 5.0, reflecting ${mn>=4.5?"strong and consistent":"generally positive"} satisfaction. The highest-rated areas were ${esc(CAT[a.hi])} (${f2(top)}) and ${esc(CAT[a.qa.map((x,i)=>i==a.hi?-1:x).indexOf(Math.max(...a.qa.map((x,i)=>i==a.hi?-1:x)))])}, while ${esc(CAT[a.lo])} (${f2(a.qa[a.lo])}) offers the most room to improve.`;
+ const QT=quotes(a),vt=a.vs.filter(x=>!/†/.test(x[0])),it=a.is.filter(x=>!/†/.test(x[0])),dg=[...a.vs,...a.is].some(x=>/†/.test(x[0])),nv=a.vals.length,ni=a.imps.length;
+ const qual=`Participants valued the practical, interactive format${vt.length?`, especially ${jn(vt.slice(0,3).map(x=>x[0].replace(/ \(.*\)/,"").toLowerCase()))}`:""}. ${it.length?`Of ${ni} written improvement suggestions, the main themes were ${jn(it.slice(0,3).map(x=>x[0].replace(/ \(.*\)/,"").toLowerCase()))}.`:"Few written improvement suggestions were received, so improvement areas below are drawn from the lowest-rated parameters."} ${a.pro} of ${a.nn} respondents scored 9 or 10 on likelihood to recommend.`;
+ const tbl=(h,l,c)=>`<table><tr><th>${h}</th><th>${c}</th></tr>${l.map(x=>`<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join("")||"<tr><td colspan=2>–</td></tr>"}</table>`;
+ return`<section class="page">${LOGO}<h1>Training Feedback Analysis Report</h1><div class="sub">${esc(a.names)}</div><div class="meta">Jindal Steel Ltd | ${esc(a.dates)}</div>
+<p>${intro}</p><table class="k">${tr("Total Participants",ak?`${att} attended of ${nom} nominated${n>1?" across "+n+" batches":""}`:`${nom} nominated${n>1?" across "+n+" batches":""}; ${a.res} submitted feedback`)}${tr("Batches Covered",a.B.map(b=>esc(b.label)+(ak?` (${b.att} of ${b.nom})`:` (${b.nom} nominated, ${b.rows.length} responses)`)).join("<br>"))}${tr("Overall Average Score",f2(a.avg)+" out of 5.0")}${tr("Overall Recommendation Score",f2(a.rec)+" out of 10")}${tr("Program",esc(prog))}</table>
+<h2>Feedback Analysis</h2><h3>1. Executive Summary</h3>
+<table class="k">${tr("Response Count",a.res+" participants")}${tr("Overall Satisfaction Score",f2(a.avg)+" out of 5.0")}${tr("Average Recommendation Score",f2(a.rec)+" out of 10")}${tr("Highest Rated Area",`${esc(CAT[a.hi])} (${f2(top)})`)}${tr("Area with Improvement Opportunity",`${esc(CAT[a.lo])} (${f2(a.qa[a.lo])})`)}</table>
+<h3>2. Quantitative Performance Analysis</h3><p>${quant}</p>
+<table class="q"><tr><th>Category</th><th>Average Rating (Out of 5)</th></tr>${CAT.map((c,i)=>`<tr><td>${c}</td><td>${f2(a.qa[i])}</td></tr>`).join("")}</table>
+<div class="foot">Training Feedback Analysis Report | Page 1 of 2</div></section>
+<section class="page"><h3 style="margin-top:0">3. Qualitative Insights</h3><p>${qual}</p>
+${a.vs.length||a.is.length?`<div class="two">${a.vs.length?`<div>${tbl("Most valued aspects",a.vs,"Mentions")}</div>`:""}${a.is.length?`<div>${tbl("Improvement themes",a.is,"Mentions")}</div>`:""}</div>${dg?`<div style="font-size:.8em;color:var(--gr)">† Derived from rating scores (number of respondents) where written comments gave too little signal.</div>`:""}`:""}
+${QT.length?`<p><b>Representative participant feedback:</b></p><ul class="qt">${QT.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:""}
+<h3>4. Recommendations</h3><ol class="rec">${recs(a).map(r=>`<li><b>${esc(r[0])}.</b> ${esc(r[1])} <i>Action:</i> ${esc(r[2])}</li>`).join("")}</ol>
+<div class="end">End of Feedback Analysis Report<br>Thank You</div><div class="foot">Training Feedback Analysis Report | Page 2 of 2</div></section>`}
+const LOGO=`<svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">    <desc id="desc">A saffron feedback bubble containing an analytical bar chart, with a spring-green insight marker.</desc>  <!-- Jindal-inspired UI mark: saffron #F47920, spring green #4DBB45, charcoal #666668. -->  <path fill="#F47920" d="M20 18h88c8.8 0 16 7.2 16 16v48c0 8.8-7.2 16-16 16H67.8L47.2 113.4c-5.1 3.8-12.4.2-12.4-6.2V98H20c-8.8 0-16-7.2-16-16V34c0-8.8 7.2-16 16-16Z"/>  <path fill="#FFF" d="M33 72h12V53H33v19Zm25 0h12V39H58v33Zm25 0h12V27H83v45Z"/>  <path fill="#FFF" d="M30 79h68v6H30z"/>  <circle cx="89" cy="26" r="14" fill="#4DBB45"/>  <path fill="#FFF" d="m83.8 26.5 3.6 3.6 7.8-8.1 3.1 3-10.9 11.2-6.7-6.6 3.1-3.1Z"/></svg>`;
+function fit(){document.querySelectorAll(".page").forEach(p=>{let s=11;p.style.setProperty("--s",s+"px");while(p.scrollHeight>p.clientHeight+1&&s>6.5){s-=.25;p.style.setProperty("--s",s+"px")}})}
+let ALL=[],PT=null;const T0=document.title;addEventListener("beforeprint",()=>{if(PT)document.title=PT});addEventListener("afterprint",()=>{document.title=T0});const DZ0=document.getElementById("m").innerHTML;
+async function load(files){for(const f of files){const k=f.name+f.size;if(ALL.some(b=>b.fn===k))continue;try{const b=parse(await f.arrayBuffer(),f.name);b.fn=k;b.raw=b.label;ALL.push(b)}catch(e){alert("Could not read "+f.name+". It needs an Attendance sheet and a Feedback sheet with a Timestamp column.")}}
+ render()}
+function render(){const has=ALL.length>0;$("#clr").style.display=$("#pr").style.display=has?"":"none";
+ if(!has){$("#m").innerHTML=DZ0;$("#fi2").onchange=e=>{load(e.target.files);e.target.value=""};return}
+ const B=ALL.slice().sort((x,y)=>x.raw.localeCompare(y.raw,undefined,{numeric:true}));B.forEach(b=>b.label=b.raw);
+ B.forEach((b,i)=>{if(!/^Batch \d+$/.test(b.label)){const nm=String(b.info.name||"");let t=b.label.replace(nm,"").replace(/\s*\(\d+\)\s*$/,"");const u=t.split("_").pop();t=(u&&u!==t?u:t).replace(/^[\s\-–_]+|[\s\-–_]+$/g,"");b.label="Batch "+(i+1)+(t?" – "+t:"")}});
+ const A=analyse(B);PT="Feedback Analysis Report | "+A.names.replace(/[\\\/:*?"<>|]+/g,"-")+"_"+A.dates;$("#m").innerHTML=report(A);(document.fonts?document.fonts.ready:Promise.resolve()).then(fit);fit()}
+$("#fi").onchange=$("#fi2").onchange=e=>{load(e.target.files);e.target.value=""};$("#pr").onclick=()=>print();$("#clr").onclick=()=>{if(confirm("Clear all uploaded files and start fresh?")){ALL=[];render()}};
+["dragover","dragenter"].forEach(t=>document.addEventListener(t,e=>{e.preventDefault()}));
+document.addEventListener("drop",e=>{e.preventDefault();if(e.dataTransfer.files.length)load(e.dataTransfer.files)});
+// Use the local SVG as the browser-tab app icon (favicon).
+const tabIcon=document.querySelector('link[rel="icon"]');
+if(tabIcon){tabIcon.href="feedback-analysis-report-icon.svg";tabIcon.type="image/svg+xml";}
+</script></body></html>
