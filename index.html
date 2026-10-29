@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Training Feedback Analysis Report Generator</title>
-<link rel="icon" type="image/svg+xml" href="download.svg">
- <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="download.svg?v=2">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{--or:#F47920;--bu:#7C4548;--gr:#636466;--bl:#496689;--nv:#1F3864;--rw:#F8F1F1;--ln:#cfc3c3;--ok:#4DBB45}
@@ -157,7 +157,4 @@ function render(){const has=ALL.length>0;$("#clr").style.display=$("#pr").style.
 $("#fi").onchange=$("#fi2").onchange=e=>{load(e.target.files);e.target.value=""};$("#pr").onclick=()=>print();$("#clr").onclick=()=>{if(confirm("Clear all uploaded files and start fresh?")){ALL=[];render()}};
 ["dragover","dragenter"].forEach(t=>document.addEventListener(t,e=>{e.preventDefault()}));
 document.addEventListener("drop",e=>{e.preventDefault();if(e.dataTransfer.files.length)load(e.dataTransfer.files)});
-// Use the local SVG as the browser-tab app icon (favicon).
-const tabIcon=document.querySelector('link[rel="icon"]');
-if(tabIcon){tabIcon.href="feedback-analysis-report-icon.svg";tabIcon.type="image/svg+xml";}
 </script></body></html>
